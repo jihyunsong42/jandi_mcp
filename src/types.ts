@@ -1,10 +1,26 @@
 // Jandi API response types
 
 export interface JandiConfig {
-  accessToken: string;
-  teamId: string;
-  memberId: string;
-  accountId: string;
+  refreshToken: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
+  ts: number;
+}
+
+export interface UserInfoResponse {
+  uuid: string;
+  name: string;
+  memberships: Array<{
+    teamId: number;
+    memberId: number;
+    name: string;
+    domain: string;
+  }>;
 }
 
 export interface Room {

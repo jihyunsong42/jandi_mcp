@@ -14,20 +14,18 @@ npm run build
 `.env.example`을 복사하여 `.env` 파일을 생성하고 값을 채워주세요.
 
 ```env
-JANDI_ACCESS_TOKEN=your_jwt_token_here
-JANDI_TEAM_ID=your_team_id
-JANDI_MEMBER_ID=your_member_id
-JANDI_ACCOUNT_ID=your_account_id
+JANDI_REFRESH_TOKEN=your_refresh_token_here
 ```
 
-### 토큰 추출 방법
+### Refresh Token 추출 방법
 
 1. 브라우저에서 `jandi.com` 접속 후 로그인
 2. F12 → Network 탭 열기
 3. 아무 API 요청 클릭 → Headers 탭
-4. 다음 값들을 복사:
-   - `authorization` 헤더에서 `bearer ` 뒤의 토큰
-   - `x-team-id`, `x-member-id`, `x-account-id` 값
+4. Response 탭에서 `refresh_token` 값 복사
+
+> **참고**: Refresh token은 access token보다 수명이 길어서 자주 갱신할 필요가 없습니다.
+> Access token(12시간)은 MCP 서버가 자동으로 갱신합니다.
 
 ## Claude Desktop 설정
 
@@ -40,10 +38,7 @@ JANDI_ACCOUNT_ID=your_account_id
       "command": "node",
       "args": ["C:\\Users\\dev\\Desktop\\dsstore\\dongascience_jandi_mcp\\dist\\index.js"],
       "env": {
-        "JANDI_ACCESS_TOKEN": "your_token",
-        "JANDI_TEAM_ID": "your_team_id",
-        "JANDI_MEMBER_ID": "your_member_id",
-        "JANDI_ACCOUNT_ID": "your_account_id"
+        "JANDI_REFRESH_TOKEN": "your_refresh_token"
       }
     }
   }
@@ -112,5 +107,5 @@ npx @anthropic/mcp-inspector node dist/index.js
 
 ## 주의사항
 
-- JWT 토큰은 만료됩니다. 401 오류 발생 시 토큰을 새로 추출하세요.
+- Refresh token이 만료되면 다시 브라우저에서 로그인하여 새 토큰을 추출하세요.
 - 비공식 API를 사용하므로 Jandi 업데이트 시 동작하지 않을 수 있습니다.
