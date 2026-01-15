@@ -1,7 +1,9 @@
 // Jandi API response types
 
 export interface JandiConfig {
-  refreshToken: string;
+  refreshToken?: string;
+  email?: string;
+  password?: string;
 }
 
 export interface TokenResponse {

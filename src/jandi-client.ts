@@ -7,11 +7,14 @@ import type {
   TokenResponse,
   UserInfoResponse,
 } from "./types.js";
+import { loginAndGetRefreshToken } from "./browser-auth.js";
 
 const BASE_URL = "https://i1.jandi.com";
 
 export class JandiClient {
-  private refreshToken: string;
+  private refreshToken: string | null = null;
+  private email: string | null = null;
+  private password: string | null = null;
   private accessToken: string | null = null;
   private tokenExpiresAt: number = 0;
   private teamId: string | null = null;
@@ -20,13 +23,42 @@ export class JandiClient {
   private initialized: boolean = false;
 
   constructor(config: JandiConfig) {
-    this.refreshToken = config.refreshToken;
+    if (config.refreshToken) {
+      this.refreshToken = config.refreshToken;
+    } else if (config.email && config.password) {
+      this.email = config.email;
+      this.password = config.password;
+    } else {
+      throw new Error(
+        "Either refreshToken or both email and password must be provided",
+      );
+    }
+  }
+
+  /**
+   * Get refresh token by logging in with email/password if not already available
+   */
+  private async ensureRefreshToken(): Promise<void> {
+    if (this.refreshToken) {
+      return;
+    }
+
+    if (!this.email || !this.password) {
+      throw new Error("Email and password required for login");
+    }
+
+    console.error("Logging in to Jandi with email/password...");
+    const result = await loginAndGetRefreshToken(this.email, this.password);
+    this.refreshToken = result.refreshToken;
+    console.error("Successfully obtained refresh token");
   }
 
   /**
    * Refresh access token using refresh token
    */
   private async refreshAccessToken(): Promise<void> {
+    await this.ensureRefreshToken();
+
     const response = await fetch(`${BASE_URL}/inner-api/token`, {
       method: "POST",
       headers: {
@@ -87,6 +119,14 @@ export class JandiClient {
     } else {
       throw new Error("No team membership found");
     }
+  }
+
+  /**
+   * Initialize the client (login and fetch user info)
+   * Call this at startup to pre-authenticate
+   */
+  async initialize(): Promise<void> {
+    await this.ensureInitialized();
   }
 
   /**
@@ -237,15 +277,20 @@ export class JandiClient {
 }
 
 export function createJandiClient(): JandiClient {
+  const email = process.env.JANDI_EMAIL;
+  const password = process.env.JANDI_PASSWORD;
   const refreshToken = process.env.JANDI_REFRESH_TOKEN;
 
-  if (!refreshToken) {
-    throw new Error(
-      "Missing Jandi credentials. Please set JANDI_REFRESH_TOKEN environment variable.",
-    );
+  // Prefer email/password login over refresh token
+  if (email && password) {
+    return new JandiClient({ email, password });
   }
 
-  return new JandiClient({
-    refreshToken,
-  });
+  if (refreshToken) {
+    return new JandiClient({ refreshToken });
+  }
+
+  throw new Error(
+    "Missing Jandi credentials. Please set JANDI_EMAIL and JANDI_PASSWORD, or JANDI_REFRESH_TOKEN environment variable.",
+  );
 }

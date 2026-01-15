@@ -13,23 +13,72 @@ npm run build
 
 `.env.example`을 복사하여 `.env` 파일을 생성하고 값을 채워주세요.
 
+### 방법 1: 이메일/비밀번호 로그인 (권장)
+
+```env
+JANDI_EMAIL=your_email@example.com
+JANDI_PASSWORD=your_password
+```
+
+MCP 서버가 시작될 때 headless 브라우저로 자동 로그인하여 토큰을 획득합니다.
+
+### 방법 2: Refresh Token 직접 설정
+
 ```env
 JANDI_REFRESH_TOKEN=your_refresh_token_here
 ```
 
-### Refresh Token 추출 방법
+Refresh token을 수동으로 추출하여 설정하는 방법입니다.
+
+#### Refresh Token 추출 방법
 
 1. 브라우저에서 `jandi.com` 접속 후 로그인
 2. F12 → Network 탭 열기
 3. 아무 API 요청 클릭 → Headers 탭
 4. Response 탭에서 `refresh_token` 값 복사
 
-> **참고**: Refresh token은 access token보다 수명이 길어서 자주 갱신할 필요가 없습니다.
-> Access token(12시간)은 MCP 서버가 자동으로 갱신합니다.
+> **참고**: 이메일/비밀번호 방식을 사용하면 토큰 갱신이 자동으로 처리됩니다.
 
 ## Claude Desktop 설정
 
 `%APPDATA%\Claude\claude_desktop_config.json` 파일에 추가:
+
+### 방법 A: npm link 사용 (권장)
+
+프로젝트 디렉토리에서 `npm link`를 실행한 후:
+
+```json
+{
+  "mcpServers": {
+    "jandi": {
+      "command": "jandi-mcp",
+      "env": {
+        "JANDI_EMAIL": "your_email@example.com",
+        "JANDI_PASSWORD": "your_password"
+      }
+    }
+  }
+}
+```
+
+### 방법 B: 직접 경로 지정
+
+```json
+{
+  "mcpServers": {
+    "jandi": {
+      "command": "node",
+      "args": ["C:\\Users\\dev\\Desktop\\dsstore\\dongascience_jandi_mcp\\dist\\index.js"],
+      "env": {
+        "JANDI_EMAIL": "your_email@example.com",
+        "JANDI_PASSWORD": "your_password"
+      }
+    }
+  }
+}
+```
+
+또는 refresh token을 직접 설정:
 
 ```json
 {
@@ -107,5 +156,6 @@ npx @anthropic/mcp-inspector node dist/index.js
 
 ## 주의사항
 
-- Refresh token이 만료되면 다시 브라우저에서 로그인하여 새 토큰을 추출하세요.
+- 이메일/비밀번호 로그인 시 첫 시작에 headless 브라우저가 실행되어 몇 초 지연될 수 있습니다.
+- 2FA(이중 인증)가 활성화된 계정은 이메일/비밀번호 로그인이 작동하지 않을 수 있습니다.
 - 비공식 API를 사용하므로 Jandi 업데이트 시 동작하지 않을 수 있습니다.

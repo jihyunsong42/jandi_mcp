@@ -22,6 +22,16 @@ const server = new Server(
   },
 );
 
+// Create client once at startup
+let jandiClient: ReturnType<typeof createJandiClient> | null = null;
+
+function getClient() {
+  if (!jandiClient) {
+    jandiClient = createJandiClient();
+  }
+  return jandiClient;
+}
+
 // Tool schemas
 const GetMessagesSchema = z.object({
   roomId: z.string().describe("Room/Channel ID to get messages from"),
@@ -189,7 +199,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   try {
-    const client = createJandiClient();
+    const client = getClient();
 
     switch (name) {
       case "jandi_get_rooms": {
@@ -432,6 +442,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 // Start the server
 async function main() {
+  // Initialize client and login before accepting connections
+  const client = getClient();
+  await client.initialize();
+  console.error("Jandi client initialized");
+
   const transport = new StdioServerTransport();
   await server.connect(transport);
   console.error("Jandi MCP server running on stdio");
