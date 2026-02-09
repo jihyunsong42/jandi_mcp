@@ -111,7 +111,7 @@ Refresh token을 수동으로 추출하여 설정하는 방법입니다.
   "mcpServers": {
     "jandi": {
       "command": "node",
-      "args": ["C:\\Users\\dev\\Desktop\\dsstore\\dongascience_jandi_mcp\\dist\\index.js"],
+      "args": ["/path/to/jandi_mcp/dist/index.js"],
       "env": {
         "JANDI_EMAIL": "your_email@example.com",
         "JANDI_PASSWORD": "your_password"
@@ -128,7 +128,7 @@ Refresh token을 수동으로 추출하여 설정하는 방법입니다.
   "mcpServers": {
     "jandi": {
       "command": "node",
-      "args": ["C:\\Users\\dev\\Desktop\\dsstore\\dongascience_jandi_mcp\\dist\\index.js"],
+      "args": ["/path/to/jandi_mcp/dist/index.js"],
       "env": {
         "JANDI_REFRESH_TOKEN": "your_refresh_token"
       }
