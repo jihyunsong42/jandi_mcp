@@ -9,6 +9,49 @@ npm install
 npm run build
 ```
 
+## 브라우저 요구사항
+
+이메일/비밀번호 로그인 방식을 사용하려면 Chromium 기반 브라우저가 시스템에 설치되어 있어야 합니다.
+
+### 지원 브라우저
+
+- Google Chrome (권장)
+- Chromium
+- Microsoft Edge
+- Brave Browser
+
+### 플랫폼별 설치 방법
+
+**macOS:**
+```bash
+# Homebrew 사용
+brew install --cask google-chrome
+# 또는
+brew install --cask chromium
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Chrome
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+sudo apt update && sudo apt install google-chrome-stable
+
+# 또는 Chromium
+sudo apt install chromium-browser
+```
+
+**Windows:**
+- [Chrome 다운로드](https://www.google.com/chrome/)에서 설치
+
+### 브라우저 경로 직접 지정
+
+자동 감지가 실패하는 경우 환경변수로 브라우저 경로를 지정할 수 있습니다:
+
+```env
+PUPPETEER_EXECUTABLE_PATH=/path/to/chrome
+```
+
 ## 환경변수 설정
 
 `.env.example`을 복사하여 `.env` 파일을 생성하고 값을 채워주세요.
