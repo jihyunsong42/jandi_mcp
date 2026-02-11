@@ -40,6 +40,12 @@ const GetMessagesSchema = z.object({
     .optional()
     .default(30)
     .describe("Number of messages to retrieve (default: 30)"),
+  ts: z
+    .number()
+    .optional()
+    .describe(
+      "Timestamp in milliseconds to fetch messages before this time (e.g., 1767193200000 for 2025-12-31)",
+    ),
 });
 
 const GetCommentsSchema = z.object({
@@ -152,6 +158,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               type: "number",
               description: "Number of messages to retrieve (default: 30)",
             },
+            ts: {
+              type: "number",
+              description:
+                "Timestamp in milliseconds to fetch messages before this time (e.g., 1767193200000 for 2025-12-31)",
+            },
           },
           required: ["roomId"],
         },
@@ -253,7 +264,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
       case "jandi_get_messages": {
         const parsed = GetMessagesSchema.parse(args);
-        const response = await client.getMessages(parsed.roomId, parsed.count);
+        const response = await client.getMessages(
+          parsed.roomId,
+          parsed.count,
+          undefined,
+          parsed.ts,
+        );
 
         // Handle various response formats
         const messages = response.messages || response.records || [];
