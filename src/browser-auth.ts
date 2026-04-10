@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import { getBrowserExecutablePath } from "./browser-detector.js";
 
 const LOGIN_URL = "https://www.jandi.com/signin";
 const TOKEN_URL = "https://www.jandi.com/version/useragent/web";
@@ -14,9 +15,17 @@ export async function loginAndGetRefreshToken(
   email: string,
   password: string,
 ): Promise<LoginResult> {
+  const executablePath = getBrowserExecutablePath();
+
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+    ],
   });
 
   try {

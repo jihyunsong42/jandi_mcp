@@ -9,6 +9,49 @@ npm install
 npm run build
 ```
 
+## 브라우저 요구사항
+
+이메일/비밀번호 로그인 방식을 사용하려면 Chromium 기반 브라우저가 시스템에 설치되어 있어야 합니다.
+
+### 지원 브라우저
+
+- Google Chrome (권장)
+- Chromium
+- Microsoft Edge
+- Brave Browser
+
+### 플랫폼별 설치 방법
+
+**macOS:**
+```bash
+# Homebrew 사용
+brew install --cask google-chrome
+# 또는
+brew install --cask chromium
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+# Chrome
+wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+sudo apt update && sudo apt install google-chrome-stable
+
+# 또는 Chromium
+sudo apt install chromium-browser
+```
+
+**Windows:**
+- [Chrome 다운로드](https://www.google.com/chrome/)에서 설치
+
+### 브라우저 경로 직접 지정
+
+자동 감지가 실패하는 경우 환경변수로 브라우저 경로를 지정할 수 있습니다:
+
+```env
+PUPPETEER_EXECUTABLE_PATH=/path/to/chrome
+```
+
 ## 환경변수 설정
 
 `.env.example`을 복사하여 `.env` 파일을 생성하고 값을 채워주세요.
@@ -68,7 +111,7 @@ Refresh token을 수동으로 추출하여 설정하는 방법입니다.
   "mcpServers": {
     "jandi": {
       "command": "node",
-      "args": ["C:\\Users\\dev\\Desktop\\dsstore\\dongascience_jandi_mcp\\dist\\index.js"],
+      "args": ["/path/to/jandi_mcp/dist/index.js"],
       "env": {
         "JANDI_EMAIL": "your_email@example.com",
         "JANDI_PASSWORD": "your_password"
@@ -85,7 +128,7 @@ Refresh token을 수동으로 추출하여 설정하는 방법입니다.
   "mcpServers": {
     "jandi": {
       "command": "node",
-      "args": ["C:\\Users\\dev\\Desktop\\dsstore\\dongascience_jandi_mcp\\dist\\index.js"],
+      "args": ["/path/to/jandi_mcp/dist/index.js"],
       "env": {
         "JANDI_REFRESH_TOKEN": "your_refresh_token"
       }
@@ -112,6 +155,7 @@ Refresh token을 수동으로 추출하여 설정하는 방법입니다.
 - 파라미터:
   - `roomId` (필수): 채널/DM ID
   - `count` (선택, 기본값: 30): 가져올 메시지 수
+  - `ts` (선택): 특정 시점 이전의 메시지를 조회하기 위한 타임스탬프 (밀리초 단위, 예: 1767193200000). 이 값을 활용하면 과거 메시지를 페이징하여 조회할 수 있습니다.
 - 반환: 메시지 목록
 
 ### jandi_get_comments
@@ -131,6 +175,9 @@ jandi_get_rooms
 
 # 특정 채널 메시지 조회
 jandi_get_messages roomId="31403834" count=10
+
+# 특정 시점 이전의 메시지 조회 (페이징)
+jandi_get_messages roomId="31403834" count=50 ts=1767193200000
 
 # 특정 게시물 댓글 조회
 jandi_get_comments postId="4836099780" count=5

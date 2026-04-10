@@ -199,12 +199,17 @@ export class JandiClient {
     roomId: string,
     count: number = 30,
     linkId?: string,
+    ts?: number,
   ): Promise<MessagesResponse> {
     await this.ensureInitialized();
     let url = `${BASE_URL}/message-api/v2/teams/${this.teamId}/rooms/${roomId}/messages?count=${count}`;
 
     if (linkId) {
       url += `&linkId=${linkId}`;
+    }
+
+    if (ts) {
+      url += `&ts=${ts}`;
     }
 
     return this.makeRequest<MessagesResponse>(url, {
