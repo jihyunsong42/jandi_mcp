@@ -155,6 +155,7 @@ Refresh token을 수동으로 추출하여 설정하는 방법입니다.
 - 파라미터:
   - `roomId` (필수): 채널/DM ID
   - `count` (선택, 기본값: 30): 가져올 메시지 수
+  - `ts` (선택): 특정 시점 이전의 메시지를 조회하기 위한 타임스탬프 (밀리초 단위, 예: 1767193200000). 이 값을 활용하면 과거 메시지를 페이징하여 조회할 수 있습니다.
 - 반환: 메시지 목록
 
 ### jandi_get_comments
@@ -174,6 +175,9 @@ jandi_get_rooms
 
 # 특정 채널 메시지 조회
 jandi_get_messages roomId="31403834" count=10
+
+# 특정 시점 이전의 메시지 조회 (페이징)
+jandi_get_messages roomId="31403834" count=50 ts=1767193200000
 
 # 특정 게시물 댓글 조회
 jandi_get_comments postId="4836099780" count=5
